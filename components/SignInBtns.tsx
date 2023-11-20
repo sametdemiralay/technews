@@ -1,11 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-// import { signIn } from "next-auth/react";
-
-const signIn = (val: any) => {
-  console.log('sing in', val);
-};
+import { signIn } from 'next-auth/react';
 
 export default function SignInBtns() {
   return (
