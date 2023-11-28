@@ -1,7 +1,7 @@
 'use client';
 
-import { categoriesData } from '@/data'; //
-// import { TCategory } from "@/app/types";
+// import { categoriesData } from '@/data';
+import { TCategory } from '@/app/types';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -14,22 +14,23 @@ export default function CreatePostForm() {
   const [linkInput, setLinkInput] = useState('');
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  //   const [categories, setCategories] = useState<TCategory[]>([]);
+  const [categories, setCategories] = useState<TCategory[]>([]);
   const [selectedCategory, setSelectedCategory] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [publicId, setPublicId] = useState('');
+  const [error, setError] = useState('');
 
   const router = useRouter();
 
-  //   useEffect(() => {
-  //     const fetchAllCategories = async () => {
-  //       const res = await fetch("api/categories");
-  //       const catNames = await res.json();
-  //       setCategories(catNames);
-  //     };
+  useEffect(() => {
+    const fetchAllCategories = async () => {
+      const res = await fetch('api/categories');
+      const catNames = await res.json();
+      setCategories(catNames);
+    };
 
-  //     fetchAllCategories();
-  //   }, []);
+    fetchAllCategories();
+  }, []);
 
   //   const handleImageUpload = (result: CldUploadWidgetResults) => {
   //     console.log("result: ", result);
@@ -79,40 +80,40 @@ export default function CreatePostForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log('submit');
+    if (!title || !content) {
+      setError('Title and content are required');
+      // const errorMessage = "Title and content are required";
+      // toast.error(errorMessage);
+      return;
+    }
 
-    // if (!title || !content) {
-    //   const errorMessage = "Title and content are required";
-    //   toast.error(errorMessage);
-    //   return;
-    // }
+    try {
+      const res = await fetch('api/posts/', {
+        method: 'POST',
+        headers: {
+          'Content-type': 'application/json',
+        },
+        body: JSON.stringify({
+          title,
+          content,
+          links,
+          selectedCategory,
+          imageUrl,
+          publicId,
+        }),
+      });
 
-    // try {
-    //   const res = await fetch("api/posts/", {
-    //     method: "POST",
-    //     headers: {
-    //       "Content-type": "application/json",
-    //     },
-    //     body: JSON.stringify({
-    //       title,
-    //       content,
-    //       links,
-    //       selectedCategory,
-    //       imageUrl,
-    //       publicId,
-    //     }),
-    //   });
-
-    //   if (res.ok) {
-    //     toast.success("Post created successfully");
-    //     router.push("/dashboard");
-    //     router.refresh();
-    //   } else {
-    //     toast.error("Something went wrong.");
-    //   }
-    // } catch (error) {
-    //   console.log(error);
-    // }
+      if (res.ok) {
+        // toast.success("Post created successfully");
+        router.push('/dashboard');
+        router.refresh();
+      }
+      // else {
+      //   toast.error("Something went wrong.");
+      // }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -241,25 +242,19 @@ export default function CreatePostForm() {
           className='p-3 rounded-md border appearance-none'
         >
           <option value=''>Select A Category</option>
-          {categoriesData &&
-            categoriesData.map((category) => (
-              <option key={category.id} value={category.name}>
-                {category.name}
-              </option>
-            ))}
-          {/* {categories &&
+          {categories &&
             categories.map((category) => (
               <option key={category.id} value={category.catName}>
                 {category.catName}
               </option>
-            ))} */}
+            ))}
         </select>
 
         <button className='primary-btn' type='submit'>
           Create Post
         </button>
 
-        <div className='p-2 text-red-500 font-bold'>Error Mesage</div>
+        {error && <div className='p-2 text-red-500 font-bold'>{error}</div>}
       </form>
     </div>
   );
