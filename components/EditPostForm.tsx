@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { CldUploadButton, CldUploadWidgetResults } from 'next-cloudinary';
 import Image from 'next/image';
-// import toast from "react-hot-toast";
+import toast from 'react-hot-toast';
 
 export default function EditPostForm({ post }: { post: TPost }) {
   const [links, setLinks] = useState<string[]>([]);
@@ -96,7 +96,7 @@ export default function EditPostForm({ post }: { post: TPost }) {
     e.preventDefault();
 
     if (!title || !content) {
-      //   toast.error("Title and content are required");
+      toast.error('Title and content are required');
       return;
     }
 
@@ -117,12 +117,12 @@ export default function EditPostForm({ post }: { post: TPost }) {
       });
 
       if (res.ok) {
-        // toast.success("Post edited successfully");
+        toast.success('Post edited successfully');
         router.push('/dashboard');
         router.refresh();
       }
     } catch (error) {
-      //   toast.error("Something went wrong");
+      toast.error('Something went wrong');
       console.log(error);
     }
   };
