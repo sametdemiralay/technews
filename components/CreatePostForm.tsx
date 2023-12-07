@@ -80,7 +80,6 @@ export default function CreatePostForm() {
     e.preventDefault();
 
     if (!title || !content) {
-      setError('Title and content are required');
       const errorMessage = 'Title and content are required';
       toast.error(errorMessage);
       return;
